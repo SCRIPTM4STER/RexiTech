@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models_product import Product, Category, Review, ProductImage, Comment
+from .models_product import Product, Category, Review, ProductImage
 from .models_order import Cart, CartItem, Order
 from django.utils.html import format_html
 
@@ -67,9 +67,3 @@ class ReviewAdmin(admin.ModelAdmin):
 admin.site.register(Review, ReviewAdmin)
 
 
-class CommentAdmin(admin.ModelAdmin):
-    list_display = ('product', 'comment', 'reply', 'date')
-    search_fields = ('product__name', 'comment')  # Ensure 'name' exists in Product model
-    list_filter = ('date',)
-
-admin.site.register(Comment, CommentAdmin)

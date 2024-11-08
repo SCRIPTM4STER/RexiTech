@@ -75,16 +75,3 @@ class Review(models.Model):
 
     class Meta:
         ordering = ['-date']
-
-class Comment(models.Model):
-    comment = models.TextField(max_length=1000)
-    reply = models.TextField(max_length=1000, blank=True, null=True)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    date = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"Comment on {self.product}"
-
-    class Meta:
-        ordering = ['-date']
-

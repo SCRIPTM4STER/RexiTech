@@ -53,8 +53,8 @@ def logout_view(request):
     return render (request, 'index.html')
 
 
-def profile(request):
-    return render(request, 'auth/profile.html')
+# def profile(request):
+#     return render(request, 'auth/profile.html')
 
 
 
