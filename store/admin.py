@@ -2,6 +2,7 @@ from django.contrib import admin
 from .models_product import Product, Category, Review, ProductImage
 from .models_order import Cart, CartItem, Order
 from django.utils.html import format_html
+from .models import UserProfile
 
 # Admin setup for Product
 
@@ -67,3 +68,6 @@ class ReviewAdmin(admin.ModelAdmin):
 admin.site.register(Review, ReviewAdmin)
 
 
+
+
+admin.site.register(UserProfile)
