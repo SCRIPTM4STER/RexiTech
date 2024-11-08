@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load static %}
+{% load custom_filters  %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <h2 class="text-center">Your Shopping Cart</h2>
+
+    {% if cart_items %}
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead class="thead-light">
+                    <tr>
+                        <th scope="col">Product</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Subtotal</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart_items %}
+                    <tr>
+                        <td>{{ item.product.name }}</td>
+                        <td>
+                            <form action="{% url 'update_cart' item.id %}" method="POST">
+                                <input type="hidden" name="csrfmiddlewaretoken" id="csrfTokenInput">
+                                <div class="input-group">
+                                    <input type="number" name="quantity" class="form-control" value="{{ item.quantity }}" min="1" max="{{ item.product.stock }}">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary" type="submit">Update</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </td>
+                        <td>${{ item.product.price }}</td>
+                        <td>${{ item.product.price|multiply:item.quantity }}</td>
+                        <td>
+                            <form action="{% url 'remove_from_cart' item.id %}" method="POST">
+                                <input type="hidden" name="csrfmiddlewaretoken" id="csrfTokenInput">
+                                <button class="btn btn-danger btn-sm" type="submit">Remove</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+                
+                
+                </tbody>
+            </table>
+        </div>
+        <tr>
+            <td colspan="3" class="text-right"><strong>Total:</strong></td>
+            <td><strong>${{ total_price }}</strong></td>  <!-- Display total cart price -->
+            <td></td>
+        </tr>
+        
+
+        <div class="text-center">
+            <a href="{% url 'checkout' %}" class="btn btn-primary btn-lg">Checkout</a>
+            <a href="{% url 'index' %}" class="btn btn-secondary btn-lg">Continue Shopping</a>
+        </div>
+    {% else %}
+        <p class="text-center">Your cart is empty. <a href="{% url 'index' %}">Continue Shopping</a></p>
+    {% endif %}
+</div>
+{% endblock content %}

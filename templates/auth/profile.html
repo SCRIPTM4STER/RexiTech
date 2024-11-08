@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="card shadow-sm mb-5">
+    <div class="profile-container card-body">
+        <h1>{{ user.username }}'s Profile</h1>
+    
+        <div class="profile-details">
+            <!-- Profile Picture -->
+            <div class="profile-picture">
+                {% if user.userprofile.profile_picture %}
+                    <img src="{{ user.userprofile.profile_picture.url }}" alt="Profile Picture" class="rounded-circle" style="width: 200px; height: 200px;">
+                {% else %}
+                    <img src="{% static 'images/icons/user.png' %}" alt="Default Profile Picture">
+                {% endif %}
+            </div>
+    
+            <!-- User Information -->
+            <div class="profile-info">
+                <p><strong>Username:</strong> {{ user.username }}</p>
+                <p><strong>Email:</strong> {{ user.userprofile.email }}</p>
+                <p><strong>Phone:</strong> {{ user.userprofile.phone }}</p>
+            </div>
+        </div>
+    
+        <!-- Optionally add edit button -->
+        <div class="edit-profile">
+            <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+            <a href="{% url 'edit_profile' %}" class="btn btn-primary">Edit Profile</a>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

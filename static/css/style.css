@@ -1,0 +1,149 @@
+.search {
+  background-color: #007BFF;
+  border-radius: 30px;
+  padding: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.search__bar {
+  background-color: #F8F9FA;
+  color: #495057;
+  font-size: 16px;
+  border: none;
+  border-radius: 30px;
+  margin: 0 10px;
+  padding: 10px 20px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.search__btn {
+  background-color: #007BFF;
+  color: #FFFFFF;
+  font-size: 16px;
+  border: none;
+  border-radius: 30px;
+  padding: 10px 20px;
+  transition: all 0.4s ease;
+}
+
+.search__btn:hover {
+  background-color: #0056b3;
+  color: #FFFFFF;
+  cursor: pointer;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  transform: translateY(-3px);
+}
+
+
+.custom-img {
+    max-width: 50%;
+    /* Adjust as needed */
+    height: auto;
+    /* Maintain aspect ratio */
+    margin: auto;
+    /* Center the image */
+}
+
+
+
+.checkout-header {
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.checkout-summary {
+    border-top: 2px solid #ddd;
+    padding-top: 20px;
+}
+
+.total-amount {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ff5722;
+}
+
+
+/* static/css/style.css */
+
+
+h1 {
+    text-align: center;
+}
+
+.product-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.product {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 10px;
+    background: white;
+    text-align: center;
+    width: 200px;
+}
+
+
+
+
+
+.cart-header {
+    font-weight: bold;
+  }
+  .cart-total {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ff5722;
+  }
+  .cart-row {
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+  }
+  .product-img {
+    max-width: 80px;
+  }
+  .quantity-input {
+    width: 60px;
+    text-align: center;
+  }
+  @media (max-width: 768px) {
+    .cart-row {
+      display: block;
+    }
+    .product-details {
+      margin-top: 10px;
+    }
+  }
+
+
+  .icon__img {
+    width: 30px;
+    height: 30px;
+  }
+
+
+
+  .dropdown-item {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+.dropdown-header {
+    font-weight: bold;
+    background-color: #f8f9fa;
+    padding: 8px 16px;
+}
+
+.dropdown-item:hover {
+    background-color: #e2e6ea;
+}
+
+.card {
+  margin-bottom: 20px; /* Adjust space between cards */
+}
+
+.card-body {
+  padding: 15px; /* Ensure consistent padding inside cards */
+}
