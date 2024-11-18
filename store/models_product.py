@@ -34,6 +34,7 @@ class Category(models.Model):
 class Product(models.Model):
     name = models.CharField(max_length=255)
     product_id = models.CharField(max_length=50, blank=True, null=True, verbose_name="Product ID", unique=True)
+    brand_name = models.CharField(max_length=200)
     category = models.ForeignKey('Category', on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.PositiveIntegerField()
@@ -69,9 +70,15 @@ class Review(models.Model):
     comment = models.TextField(max_length=1000)
     rating = models.FloatField(default=0)
     date = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE) 
 
     def __str__(self):
         return f"Review of {self.product}"
 
     class Meta:
         ordering = ['-date']
+
+
+
+
+

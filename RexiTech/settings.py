@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-^o6t@*gog_gz2q9_vd=++lx6+3!35ps42i!=sd3$m6^fe57x%g'
+SECRET_KEY = 'django-insecure-!o@%a0d(rsjgaso7$50+hb1u$um2u26tep_$vd-cz^@qkzu4gw'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -50,12 +50,32 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# Ensure HSTS (HTTP Strict Transport Security) headers are sent to enforce HTTPS.
+SECURE_HSTS_SECONDS = 31536000  # One year, adjust as needed
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+
+
+
+# Prevent browsers from guessing content types (MIME types)
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# XSS protection (cross-site scripting)
+SECURE_BROWSER_XSS_FILTER = True
+
+# Only allow cookies to be sent over HTTPS
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+
+
+
 ROOT_URLCONF = 'RexiTech.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [ BASE_DIR / "templates" ],
+        'DIRS': [ BASE_DIR / 'templates' ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -119,11 +139,11 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
+    BASE_DIR / 'static'
 ]
 
-
-
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

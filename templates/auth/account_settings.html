@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<style type="text/css">
+    /* Container Styling */
+    .settings-container {
+        max-width: 500px;
+        margin: 60px auto;
+        padding: 30px;
+        background-color: #f9fafb;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        font-family: Arial, sans-serif;
+    }
+
+    /* Title Styling */
+    h1 {
+        text-align: center;
+        margin-bottom: 40px;
+        color: #333;
+        font-size: 24px;
+    }
+
+    /* Settings Item Styling */
+    .settings-item {
+        margin-bottom: 25px;
+    }
+
+    .settings-item h3 {
+        margin: 0 0 8px;
+        font-size: 18px;
+        color: #555;
+    }
+
+    .settings-item p {
+        font-size: 14px;
+        color: #777;
+    }
+
+    /* Button Styling - Consistent Size and Flex for Full Width */
+    .settings-btn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;  /* Full width on mobile */
+        max-width: 200px;  /* Consistent size on larger screens */
+        margin: 5px auto;  /* Center alignment for mobile */
+        padding: 10px 0;   /* Uniform padding */
+        color: #fff;
+        background-color: #1d72b8;
+        border: none;
+        border-radius: 5px;
+        font-size: 15px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, box-shadow 0.2s ease;
+        text-decoration: none;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .settings-btn:hover {
+        background-color: #155a8a;
+        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+    }
+
+
+
+    /* Adding Hover Effect and Icon Styling */
+    .settings-item:hover {
+        background-color: #f0f2f5;
+        padding: 10px;
+        border-radius: 8px;
+        transition: background-color 0.3s ease;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 600px) {
+        .settings-container {
+            width: 90%;
+            padding: 20px;
+        }
+        
+        .settings-btn {
+            width: 100%; /* Full width on mobile */
+            max-width: 100%; /* Remove max-width constraint */
+        }
+    }
+</style>
+
+<div class="settings-container">
+    <h1>Account Settings</h1>
+
+    <div class="settings-item">
+        <h3>Logout</h3>
+        <form action="{% url 'logout' %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" class="settings-btn">Logout</button>
+        </form>
+    </div>
+
+    <div class="settings-item">
+        <h3>Switch Account</h3>
+        <p>Log in to a different account:</p>
+        <a href="{% url 'login' %}" class="settings-btn">Login to Another Account</a>
+    </div>
+
+    <div class="settings-item">
+        <h3>Delete Account</h3>
+        <p>Once you delete your account, there is no going back. Please be certain.</p>
+        <form action="{% url 'delete_account' %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" class="settings-btn">Delete Account</button>
+        </form>
+    </div>
+
+    <div class="settings-item">
+        <h3>Password</h3>
+        <p>Update your password for improved security.</p>
+        <a href="{% url "change_password" %}" class="settings-btn">Change Password</a>
+    </div>
+</div>
+{% endblock %}

@@ -2,12 +2,13 @@ from django.shortcuts import render
 from django.shortcuts import render, get_object_or_404, redirect
 from .models_product import Product, Category, Review
 from .models_order import Cart, CartItem, Order
-from .forms import ReviewForm, EditProfileForm, RegisterForm, LoginForm
-from django.http import HttpResponse
+from .forms import ReviewForm,  EditProfileForm, RegisterForm, LoginForm, CustomPasswordChangeForm
+from django.http import HttpResponse, HttpResponseForbidden, JsonResponse
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib import messages
 from django.contrib.auth.models import User
+
 
 
 # Display products and categories on the index page
@@ -16,6 +17,8 @@ def index(request):
     products = Product.objects.all()
     return render(request, 'index.html', {'categories': categories, 'products': products})
 
+
+@login_required
 # Add product to the cart view
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
@@ -46,7 +49,7 @@ def add_to_cart(request, product_id):
 
 
 
-
+@login_required
 # In the cart_view function
 def cart_view(request):
     cart = Cart.objects.filter(user=request.user).first()
@@ -55,6 +58,7 @@ def cart_view(request):
     return render(request, 'store/cart.html', {'cart_items': cart_items, 'total_price': total_price})
 
 
+@login_required
 # Checkout and create an order
 def checkout(request):
     cart = Cart.objects.filter(user=request.user).first()
@@ -108,37 +112,62 @@ def remove_from_cart(request, item_id):
 
     return redirect('cart')
 
+@login_required
+def cart_item_count(request):
+    cart = Cart.objects.filter(user=request.user).first()
+    item_count = cart.items.count() if cart else 0
+    return JsonResponse({'item_count': item_count})
 
+
+
+from django.db.models import Avg
 
 def product_detail(request, product_id):
-    # Fetch the product based on the provided product_id
     product = get_object_or_404(Product, product_id=product_id)
-    
-    # Check if the product is out of stock
     is_out_of_stock = product.stock == 0
-    
-    # Handle the review form submission
+
+    # Initialize the review form only
+    review_form = ReviewForm()
+
     if request.method == 'POST':
-        form = ReviewForm(request.POST)
-        if form.is_valid():
-            review = form.save(commit=False)  # Don't save to the database yet
-            review.product = product  # Assign the current product to the review
-            review.save()  # Save the review instance to the database
-            return redirect('product_detail', product_id=product.product_id)  # Redirect using product_id
-    else:
-        form = ReviewForm()
+        if 'review_submit' in request.POST:
+            review_form = ReviewForm(request.POST)
+            if review_form.is_valid():
+                review = review_form.save(commit=False)
+                review.product = product
+                review.user = request.user  # Set user to the logged-in user
+                review.save()
+                return redirect('product_detail', product_id=product.product_id)
 
-    # Fetch all reviews related to this product
+    # Fetch reviews and calculate average rating
     reviews = Review.objects.filter(product=product)
+    average_rating = reviews.aggregate(Avg('rating'))['rating__avg'] or 0  # Defaults to 0 if no reviews
 
-    # Pass the product, review form, existing reviews, and out of stock status to the template
     context = {
         'product': product,
-        'form': form,
+        'review_form': review_form,
         'reviews': reviews,
-        'is_out_of_stock': is_out_of_stock,  # Pass the out of stock flag
+        'average_rating': round(average_rating, 1),  # Round to 1 decimal place
+        'is_out_of_stock': is_out_of_stock,
     }
     return render(request, 'store/product_detail.html', context)
+
+
+
+
+
+
+@login_required
+def delete_review(request, review_id):
+    review = get_object_or_404(Review, id=review_id)
+    if request.user == review.user:  # Ensure the user is the owner
+        review.delete()
+        return redirect('product_detail', product_id=review.product.product_id)
+    return HttpResponseForbidden("You are not allowed to delete this review.")
+
+
+
+
 
 
 
@@ -184,6 +213,8 @@ def search(request):
         'search_history': request.session.get('search_history', [])
     }
     return render(request, 'store/product_search.html', param)
+
+
 
 
 
@@ -237,9 +268,16 @@ def login_view(request):
         if form.is_valid():
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
+            remember_me = form.cleaned_data.get('remember_me')  # Add this line
+
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
+                if not remember_me:
+                    request.session.set_expiry(0)  # Expires when browser closes
+                else:
+                    request.session.set_expiry(1209600)  # Two weeks
+
                 messages.success(request, f'Welcome back, {username}!')
                 return redirect('index')
             else:
@@ -251,6 +289,7 @@ def login_view(request):
     return render(request, 'auth/login.html', {'form': form})
 
 
+@login_required
 def logout_view(request):
     logout(request)
     return render (request, 'index.html')
@@ -260,7 +299,7 @@ def logout_view(request):
 
 @login_required
 def edit_profile(request):
-    user_profile = request.user.userprofile
+    user_profile = request.user.userprofile  # Assuming there’s a related UserProfile model
     if request.method == 'POST':
         form = EditProfileForm(request.POST, request.FILES, instance=user_profile, user=request.user)
         if form.is_valid():
@@ -270,3 +309,37 @@ def edit_profile(request):
         form = EditProfileForm(instance=user_profile, user=request.user)
     
     return render(request, 'auth/edit_profile.html', {'form': form})
+
+
+
+
+# Function to delete UserAccount
+@login_required
+def delete_account(request):
+    if request.method == 'POST':
+        user = request.user
+        user.delete()
+        messages.success(request, "Your account has been successfully deleted.")
+        return redirect('index')
+    return render(request, 'auth/confirm_delete_account.html')
+
+
+
+def account_settings(request):
+    return render(request, 'auth/account_settings.html')
+
+
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        form = CustomPasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Keeps the user logged in after password change
+            messages.success(request, 'Your password has been changed successfully.')
+            return redirect('profile')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = CustomPasswordChangeForm(request.user)
+    return render(request, 'auth/change_password.html', {'form': form})

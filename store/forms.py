@@ -4,6 +4,9 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
 from .models import UserProfile
+from django.contrib.auth.forms import PasswordChangeForm
+
+
 
 class ReviewForm(forms.ModelForm):
     class Meta:
@@ -61,43 +64,58 @@ class RegisterForm(UserCreationForm):
 class LoginForm(AuthenticationForm):
     username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Username'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password'}))
-
+    remember_me = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['username'].label = 'Username'
         self.fields['password'].label = 'Password'
+        self.fields['remember_me'].label = 'Remember Me'
         self.fields['username'].help_text = None
         self.fields['password'].help_text = None
+        self.fields['remember_me'].help_text = None
 
 
 
 
 
 class EditProfileForm(forms.ModelForm):
-    username = forms.CharField(max_length=150)  # Add username field here
+    username = forms.CharField(max_length=150)  # Add username field
+    email = forms.EmailField()  # Add email field
 
     class Meta:
-        model = UserProfile
+        model = UserProfile  # Assuming UserProfile is a custom profile model
         fields = ['profile_picture', 'email', 'phone']
 
     def __init__(self, *args, **kwargs):
-        # Pop the user instance from the keyword arguments, if present
         self.user = kwargs.pop('user', None)
         super(EditProfileForm, self).__init__(*args, **kwargs)
 
-        # Set the initial username value from the User model
+        # Set initial values for username and email from the User model
         if self.user:
             self.fields['username'].initial = self.user.username
+            self.fields['email'].initial = self.user.email
 
     def save(self, commit=True):
         # Save the UserProfile instance
         profile = super(EditProfileForm, self).save(commit=False)
+        
+        # Update the User model's username and email if they were changed
+        if self.user:
+            if self.cleaned_data['username'] != self.user.username:
+                self.user.username = self.cleaned_data['username']
+            if self.cleaned_data['email'] != self.user.email:
+                self.user.email = self.cleaned_data['email']
+            self.user.save()  # Save changes to User model
+
+        # Save the UserProfile model instance
         if commit:
             profile.save()
         
-        # Save the User's username
-        if self.user:
-            self.user.username = self.cleaned_data['username']
-            self.user.save()
-        
         return profile
+    
+
+class CustomPasswordChangeForm(PasswordChangeForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs.update({'class': 'form-control'})

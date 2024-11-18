@@ -6,11 +6,8 @@
 <div class="container mt-5">
     <!-- Product Card -->
     <div class="card shadow-sm mb-5">
-        <!-- Header -->
-        <div class="card-header text-center bg-primary text-white">
-            <h3 class="mb-0">{{ product.name }}</h3>
-        </div>
-    
+
+
         <!-- Main Content Section: Stack images and details on mobile -->
         <div class="card-body d-flex flex-wrap justify-content-between align-items-start flex-column flex-md-row">
             <!-- Image Section (on the left) -->
@@ -20,7 +17,7 @@
                     <img src="{{ product.images.first.image.url }}" alt="{{ product.name }}"
                         class="img-fluid rounded shadow-sm w-100" style="object-fit: contain; max-height: 400px;">
                 </div>
-    
+
                 <!-- Thumbnail Images (in a row below the main image) -->
                 <div class="thumbnails d-flex justify-content-center justify-content-md-start flex-wrap">
                     {% for image in product.images.all %}
@@ -30,72 +27,81 @@
                     {% endfor %}
                 </div>
             </div>
-    
+
             <!-- Product Details (on the right) -->
             <div class="product-details" style="flex-basis: 100%; max-width: 100%; flex-grow: 1;">
-                <h5 class="card-title mt-3">{{ product.name }}</h5>
-                <p class="card-text">Price: <strong>{{ product.price }} BDT</strong></p>
-                <textarea readonly class="card-text" name="" id=""
-                    style="height: 200px; max-height: 200px; width: 100%; resize: none;">{{ product.description }}</textarea>
+                <h3 class="card-title mt-3">{{ product.name }}</h3>
+                <h5 class="card-subtitle mb-2 mt-3" style="font-style: italic; font-family: 'Lato', sans-serif;">Brand: {{ product.brand_name }}</h5>
+                <hr>
+                <p class="card-text mt-5" style="font-weight: italic; font-family: 'Lato', sans-serif; font-size: 1.9rem; color: #fd7e14"><big style="display: inline;">৳</big> {{ product.price }}</p>
                 {% if is_out_of_stock %}
                 <p class="text-danger">Out of Stock</p>
                 {% else %}
-                <p>In Stock: <strong>{{ product.stock }}</strong></p>
+                <p><strong>📦 {{ product.stock }}</strong> Units Available</p>
                 {% endif %}
-    
-                <!-- Buttons for Adding to Cart -->
+                                <!-- Buttons for Adding to Cart -->
                 <div class="d-flex justify-content-center justify-content-md-start mt-4">
                     <a href="{% url 'add_to_cart' product.id %}" class="btn btn-danger px-4 me-2">Add to Cart</a>
                 </div>
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <textarea readonly class="card-text form-control" 
+                                  style="height: 900px; max-height: 900px; width: 100%; resize: none;">{{ product.description }}</textarea>
+                    </div>
+                </div>
+                
+
             </div>
         </div>
     </div>
-    
 
-    <div class="card d-flex mb-3" style="border: none;">
-        <button id="review-btn" class="me-auto active-btn" style="border: none; background-color: transparent; width: 50%; position: relative; top: 31px; left: 0px;" onclick="showReview()">Review</button>
-        <button id="comments-btn" class="me-auto" style="border: none; background-color: transparent; width: 50%; position: relative; top: 5px; left: 50%;" onclick="showComments()">Comments</button>
-    </div>
-    
-    <!-- Comments Section -->
-    <div class="card mb-5 shadow-sm" id="comments-card" style="display: none;">
-        <div class="card-header">
-            <p class="mb-0"><strong>Comments</strong></p>
-        </div>
-    </div>
+
+
+
+
 
 
 
     <!-- Review Form Section -->
+
     <div class="card mb-5 shadow-sm" id="review-card">
-        <div class="card-header">
+        <div class="card-header d-flex justify-content-between">
             <p class="mb-0"><strong>Rate & Review of {{ product.name }}</strong></p>
+
+            <p class="mb-0" style="font-weight: bold; font-size: 1rem">
+                {% if average_rating %}
+                    {{ average_rating }} / 5
+                {% else %}
+                    No ratings yet
+                {% endif %}
+            </p>
+
         </div>
         <div class="card-body">
-            <form method="POST">
-                <input type="hidden" name="csrfmiddlewaretoken" id="csrfTokenInput">
+            <form method="POST" id="review-form">
+                {% csrf_token %}
+                <input type="hidden" name="product_id" value="{{ product.id }}">
 
-                <!-- Comment Field -->
+                <!-- Review Comment -->
                 <div class="mb-3">
-                    <label for="comment" class="form-label">Your Comment</label>
+                    <label for="comment" class="form-label">Your Review</label>
                     <textarea name="comment" id="comment" rows="4" class="form-control shadow-sm"
-                        placeholder="Write your review here...">{{ form.comment.value }}</textarea>
-                    {% if form.comment.errors %}
+                        placeholder="Write your review here...">{{ review_form.comment.value }}</textarea>
+                    {% if review_form.comment.errors %}
                     <div class="text-danger">
-                        {{ form.comment.errors }}
+                        {{ review_form.comment.errors }}
                     </div>
                     {% endif %}
                 </div>
 
-                <!-- Rating Field -->
                 <div class="mb-3">
                     <label for="rating" class="form-label">Rating (out of 5)</label>
-                    <div class="rating-wrapper grid-stack">
-                        <div class="stars-icons-outlined"></div>
-                        <div class="stars-icons-filled"></div>
-                        <input type="range" name="rating" id="rating" class="stars-input form-range" min="1" max="5"
-                            value="{{ form.rating.value|default:1 }}" step="1">
-                    </div>
+                        <div class="rating-wrapper grid-stack">
+                          <div class="stars-icons-outlined"></div>
+                          <div class="stars-icons-filled"></div>
+                          <input type="range" name="rating" id="rating" class="stars-input form-range" min="1" max="5"
+                          value="{{ form.rating.value|default:5 }}" step="0.5">
+                        </div>
                     {% if form.rating.errors %}
                     <div class="text-danger">
                         {{ form.rating.errors }}
@@ -104,8 +110,12 @@
                 </div>
 
                 <!-- Submit Button -->
-                <button type="submit" class="btn btn-success w-100 shadow-sm">Submit Review</button>
+                <button type="submit" name="review_submit" class="btn btn-success w-100 shadow-sm">Submit
+                    Review</button>
             </form>
+
+
+
         </div>
 
         <!-- Reviews Section -->
@@ -114,9 +124,11 @@
                 <h4 class="text-center mb-0">Product Reviews</h4>
             </div>
             <div class="card-body">
+                
                 {% if reviews %}
                 <ul class="list-group">
                     {% for review in reviews %}
+                    
                     <li class="list-group-item d-flex justify-content-between align-items-start">
                         <div>
                             <strong>Rating:</strong> {{ review.rating }} / 5<br>
@@ -125,6 +137,9 @@
                         </div>
                         <span class="badge bg-primary rounded-pill">{{ review.rating }} <i
                                 class="fas fa-star"></i></span>
+                        {% if request.user == review.user %}
+                        <a href="{% url 'delete_review' review.id %}" class="btn btn-danger btn-sm">Delete</a>
+                        {% endif %}
                     </li>
                     {% endfor %}
                 </ul>
@@ -144,18 +159,9 @@
     }
 
 
-    function showReview() {
-        document.getElementById("review-card").style.display = "block";
-        document.getElementById("comments-card").style.display = "none";
-    }
-    
-    function showComments() {
-        document.getElementById("review-card").style.display = "none";
-        document.getElementById("comments-card").style.display = "block";
-    }
+        
 
-    
-    
+
 </script>
 
 

@@ -1,3 +1,35 @@
+.roboto { font-family: 'Roboto', sans-serif; }
+.montserrat { font-family: 'Montserrat', sans-serif; }
+.open-sans { font-family: 'Open Sans', sans-serif; }
+.lato { font-family: 'Lato', sans-serif; }
+.playfair { font-family: 'Playfair Display', serif; }
+
+
+hr {
+  border: 0;
+  height: 1px;
+  background: #000; /* Default color */
+  margin: 20px 0;
+}
+
+/* Responsive: On smaller screens, make the hr thinner and change the color */
+@media (max-width: 768px) {
+  hr {
+      background: #ccc;  /* Lighter color on small screens */
+      height: 1px;       /* Thinner line */
+  }
+}
+
+/* Responsive: On very small screens (like phones in portrait mode), make the hr more subtle */
+@media (max-width: 480px) {
+  hr {
+      background: #ddd;
+      height: 0.5px;     /* Even thinner line */
+      margin: 10px 0;    /* Smaller margin */
+  }
+}
+
+
 .search {
   background-color: #007BFF;
   border-radius: 30px;
@@ -147,3 +179,6 @@ h1 {
 .card-body {
   padding: 15px; /* Ensure consistent padding inside cards */
 }
+
+
+

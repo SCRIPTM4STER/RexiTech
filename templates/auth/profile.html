@@ -2,33 +2,259 @@
 {% load static %}
 
 {% block content %}
+<style>
+    @import url('https://fonts.googleapis.com/css?family=Open+Sans|Bree+Serif');
 
-<div class="card shadow-sm mb-5">
-    <div class="profile-container card-body">
-        <h1>{{ user.username }}'s Profile</h1>
-    
-        <div class="profile-details">
-            <!-- Profile Picture -->
-            <div class="profile-picture">
-                {% if user.userprofile.profile_picture %}
-                    <img src="{{ user.userprofile.profile_picture.url }}" alt="Profile Picture" class="rounded-circle" style="width: 200px; height: 200px;">
-                {% else %}
-                    <img src="{% static 'images/icons/user.png' %}" alt="Default Profile Picture">
-                {% endif %}
+
+
+    h3.custom-subheading {
+        font-size: 30px;
+        text-align: center;
+        color: #FFF;
+    }
+
+    h3.custom-subheading a,
+    a.custom-link {
+        color: #FFF;
+    }
+
+    /* Custom Navigation Styles */
+    nav.custom-nav {
+        margin: 50px 0;
+    }
+
+    nav.custom-nav ul {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+
+    nav.custom-nav ul li {
+        border-radius: 8px;
+        position: relative;
+
+    }
+
+    nav.custom-nav a.custom-nav-link {
+        display: block;
+        padding: 10px 20px;
+        color: #FFF;
+        font-size: 18px;
+        text-decoration: none;
+    }
+
+    nav.custom-nav a.custom-nav-link:hover {
+        background-color: #333;
+    }
+
+    /* Dropdown Styles */
+    nav.custom-nav ul ul {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        padding: 0;
+        border-radius: 8px;
+        background-color: #007bff;
+        overflow: hidden;
+        z-index: 1000;
+    }
+
+    nav.custom-nav ul li:hover > ul {
+        display: block;
+    }
+
+    nav.custom-nav ul ul li a {
+        padding: 10px 20px;
+        font-size: 16px;
+    }
+
+    /* Dropdown arrow symbol */
+    li.custom-dropdown > a:after {
+        font-size: 12px;
+    }
+
+    li.custom-dropdown > a:only-child:after {
+        content: '';
+    }
+
+    /* Profile Container */
+    .profile-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    /* Profile Picture */
+    .profile-picture img {
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    /* Profile Info */
+    .profile-details {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 30px;
+    }
+
+    .profile-info {
+        text-align: center;
+    }
+
+    /* Edit Profile Button */
+    .edit-profile {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 1200px) {
+        .profile-container {
+            margin: 0 20px;
+        }
+
+        /* Adjust the profile picture size for medium screens */
+        .profile-picture img {
+            width: 180px;
+            height: 180px;
+        }
+
+        /* Stack profile details vertically on medium screens */
+        .profile-details {
+            flex-direction: column;
+        }
+
+        .profile-info {
+            margin-top: 20px;
+        }
+
+        /* Adjust buttons for medium screens */
+        .edit-profile {
+            margin-top: 30px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        /* Adjust Profile Picture size for smaller screens */
+        .profile-picture img {
+            width: 150px;
+            height: 150px;
+        }
+
+        /* Stack Profile info vertically */
+        .profile-details {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Adjust spacing for buttons on smaller screens */
+        .edit-profile {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        /* Position navigation links correctly */
+        nav.custom-nav {
+            left: 0;
+            margin-bottom: 20px;
+        }
+
+        /* Make dropdown full-width on small screens */
+        nav.custom-nav ul ul {
+            position: static;
+            width: 100%;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Adjust navigation font size for small screens */
+        nav.custom-nav a.custom-nav-link {
+            font-size: 16px;
+        }
+
+        /* Adjust dropdown text size for small screens */
+        nav.custom-nav ul ul li a {
+            font-size: 14px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        /* Smaller adjustments for very small screens (phones) */
+        h3.custom-subheading {
+            font-size: 24px;
+        }
+
+        .profile-container {
+            padding: 10px;
+        }
+
+        nav.custom-nav ul {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        nav.custom-nav ul li {
+            width: 100%;
+            border-radius: 0;
+        }
+
+        nav.custom-nav a.custom-nav-link {
+            font-size: 14px;
+            padding: 8px 16px;
+        }
+
+        /* Adjust profile info text size */
+        .profile-info p {
+            font-size: 14px;
+        }
+
+        /* Adjust logout and edit profile buttons */
+        .edit-profile .btn {
+            width: 100%;
+            margin: 5px 0;
+        }
+    }
+</style>
+
+<div class="container">
+    <div class="card shadow-sm mb-5">
+        <div class="profile-container card-body">
+            <h1>{{ user.username }}'s Profile</h1>
+
+            <!-- Navigation Menu -->
+            <nav class="custom-nav position-relative">
+                <ul class="navbar">
+                    <li class="custom-dropdown">
+                        <a href="#" class="custom-nav-link"><i class="bi bi-gear text-black">settings</i></a>
+                        <ul>
+                            <li><a href="{% url 'account_settings' %}" class="custom-nav-link">Account Settings</a></li>
+                            <li><a href="{% url 'edit_profile' %}" class="custom-nav-link">Edit Profile</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="profile-details d-flex flex-column flex-md-row align-items-center">
+                <!-- Profile Picture -->
+                <div class="profile-picture mb-4 mb-md-0">
+                    {% if user.userprofile.profile_picture %}
+                        <img src="{{ user.userprofile.profile_picture.url }}" alt="Profile Picture" class="rounded-circle">
+                    {% else %}
+                        <img src="{% static 'images/icons/user.png' %}" alt="Default Profile Picture" class="rounded-circle">
+                    {% endif %}
+                </div>
+
+                <!-- User Information -->
+                <div class="profile-info text-center text-md-start ms-md-4">
+                    <p><strong>Username:</strong> {{ user.username }}</p>
+                    <p><strong>Email:</strong> {{ user.userprofile.email }}</p>
+                    <p><strong>Phone:</strong> {{ user.userprofile.phone }}</p>
+                </div>
             </div>
-    
-            <!-- User Information -->
-            <div class="profile-info">
-                <p><strong>Username:</strong> {{ user.username }}</p>
-                <p><strong>Email:</strong> {{ user.userprofile.email }}</p>
-                <p><strong>Phone:</strong> {{ user.userprofile.phone }}</p>
-            </div>
-        </div>
-    
-        <!-- Optionally add edit button -->
-        <div class="edit-profile">
-            <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
-            <a href="{% url 'edit_profile' %}" class="btn btn-primary">Edit Profile</a>
+
+
         </div>
     </div>
 </div>

@@ -13,3 +13,5 @@ ratingInput.addEventListener('input', function () {
     // Update the width of the filled stars
     starsFilled.style.width = `${filledWidth}px`;
 });
+
+

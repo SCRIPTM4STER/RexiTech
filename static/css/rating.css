@@ -1,119 +1,111 @@
 @property --range {
-    syntax: "<number>";
-    inherits: true;
-    initial-value: 1;
-  }
-  
-  @property --star-size {
-    syntax: "<length>";
-    inherits: true;
-    initial-value: 48px;
-  }
-  
-  @property --range-position {
-    syntax: "<number>";
-    inherits: true;
-    initial-value: 1;
-  }
-  
-  @property --max-rate {
-    syntax: "<number>";
-    inherits: true;
-    initial-value: 5;
-  }
-  
-  :root {
-    --bg-svg-star-outlined: url('data:image/svg+xml, <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="%23bf9b30" d="m22 9.24-7.19-.62L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03L22 9.24zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z"></path></svg>');
-    --bg-svg-star-filled: url('data:image/svg+xml, <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="%23bf9b30" d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27z"></path></svg>');
-  }
-  
-  hmtl, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-  }
-  
-  * {
-    box-sizing: border-box;
-  }
-  
-  .grid-stack {
-    display: grid;
-    
-    & > * {
-      grid-area: 1 / 1;
-    }
-  }
-  
-  .rating-wrapper {
-    max-width: max-content;
-    overflow: auto;
-    timeline-scope: --range-timeline;
-    animation: 1s rangeKeyframes linear;
-    animation-timeline: --range-timeline;
-    animation-range: entry 100% exit 0%;
-    
-    &:has(.stars-input:focus-within) {
-        outline-style: auto;
-        outline-color: blue;
-    }
-  }
-  
-  @keyframes rangeKeyframes {
-    to {
-      --range-position: 0;
-    }
-  }
-  
-  [class^="stars-"] {
-    width: calc(var(--max-rate) * var(--star-size));
-    height:  var(--star-size);
-  }
-  
-  [class^="stars-icons"] {
-    background: var(--bg-svg-star-outlined);
-    background-size: var(--star-size);
-  }
-  
-  .stars-icons-filled {
-    width: calc(var(--star-size) * round(up, var(--max-rate) * var(--range-position)));
-    background-image: var(--bg-svg-star-filled);
-    
-  }
-  
-  .stars-input {
-    cursor: pointer;
-    opacity: 0;
-    
-    &::-webkit-slider-thumb {
-      view-timeline: --range-timeline x;
-    }
-  }
-  
-  
-  
-  /* render on top of outline */
-  .rating-wrapper {
-    position: relative;
-    z-index: 10;
-  }
-  
-  
-  /* branding */
-  
-  .outline {
-    display: grid;
-    gap: 1rem;
-    padding: 1rem 2rem;
-    text-align: center;
-  }
-  
-  #developed-by {
-    position: absolute;
-    bottom: 1rem;
-    left: auto;
-    right: auto;
-  }
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
+@property --star-size {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 48px;
+}
+
+@property --range-position {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
+@property --max-rate {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 5;
+}
+
+:root {
+  --bg-svg-star-outlined: url('data:image/svg+xml, <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="%23bf9b30" d="m22 9.24-7.19-.62L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03L22 9.24zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z"></path></svg>');
+  --bg-svg-star-filled: url('data:image/svg+xml, <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="%23bf9b30" d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27z"></path></svg>');
+}
 
 
+
+* {
+  box-sizing: border-box;
+}
+
+.grid-stack {
+  display: grid;
   
+  & > * {
+    grid-area: 1 / 1;
+  }
+}
+
+.rating-wrapper {
+  max-width: max-content;
+  overflow: auto;
+  timeline-scope: --range-timeline;
+  animation: 1s rangeKeyframes linear;
+  animation-timeline: --range-timeline;
+  animation-range: entry 100% exit 0%;
+  
+  &:has(.stars-input:focus-within) {
+      outline-style: auto;
+      outline-color: blue;
+  }
+}
+
+@keyframes rangeKeyframes {
+  to {
+    --range-position: 0;
+  }
+}
+
+[class^="stars-"] {
+  width: calc(var(--max-rate) * var(--star-size));
+  height:  var(--star-size);
+}
+
+[class^="stars-icons"] {
+  background: var(--bg-svg-star-outlined);
+  background-size: var(--star-size);
+}
+
+.stars-icons-filled {
+  width: calc(var(--star-size) * round(up, var(--max-rate) * var(--range-position)));
+  background-image: var(--bg-svg-star-filled);
+}
+
+.stars-input {
+  cursor: pointer;
+  opacity: 0;
+  
+  &::-webkit-slider-thumb {
+    view-timeline: --range-timeline x;
+  }
+}
+
+
+
+/* render on top of outline */
+.rating-wrapper {
+  position: relative;
+  z-index: 10;
+}
+
+
+/* branding */
+
+.outline {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem 2rem;
+  text-align: center;
+}
+
+#developed-by {
+  position: absolute;
+  bottom: 1rem;
+  left: auto;
+  right: auto;
+}

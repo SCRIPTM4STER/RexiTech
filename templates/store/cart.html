@@ -25,7 +25,7 @@
                         <td>{{ item.product.name }}</td>
                         <td>
                             <form action="{% url 'update_cart' item.id %}" method="POST">
-                                <input type="hidden" name="csrfmiddlewaretoken" id="csrfTokenInput">
+                                {% csrf_token %}
                                 <div class="input-group">
                                     <input type="number" name="quantity" class="form-control" value="{{ item.quantity }}" min="1" max="{{ item.product.stock }}">
                                     <div class="input-group-append">
@@ -38,7 +38,7 @@
                         <td>${{ item.product.price|multiply:item.quantity }}</td>
                         <td>
                             <form action="{% url 'remove_from_cart' item.id %}" method="POST">
-                                <input type="hidden" name="csrfmiddlewaretoken" id="csrfTokenInput">
+                                {% csrf_token %}
                                 <button class="btn btn-danger btn-sm" type="submit">Remove</button>
                             </form>
                         </td>

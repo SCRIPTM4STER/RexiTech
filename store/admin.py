@@ -11,9 +11,9 @@ class ProductImageInline(admin.TabularInline):
     extra = 1  # Number of empty forms to display
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'category', 'product_id', 'price', 'stock', 'created_at', 'updated_at', 'thumbnail')
+    list_display = ('name', 'category', 'product_id', 'brand_name', 'price', 'stock', 'created_at', 'updated_at', 'thumbnail')
     list_filter = ('category', 'price')
-    search_fields = ('name', 'description')
+    search_fields = ('name', 'description', 'brand_name')  # Adding brand_name to search_fields
     list_editable = ('price', 'stock')
 
     # Read-only fields
@@ -31,6 +31,7 @@ class ProductAdmin(admin.ModelAdmin):
     thumbnail.short_description = 'Image'
 
 admin.site.register(Product, ProductAdmin)
+
 
 # Admin setup for Category
 class CategoryAdmin(admin.ModelAdmin):
@@ -60,12 +61,12 @@ admin.site.register(Order, OrderAdmin)
 
 
 # Admin setup for Review
+@admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
-    list_display = ('product', 'comment', 'rating', 'date')
-    search_fields = ('product__name', 'comment')
-    list_filter = ('rating', 'date')
+    list_display = ('product', 'user', 'rating', 'date')
+    list_filter = ('product', 'rating', 'date')
+    search_fields = ('user__username', 'product__name', 'comment')
 
-admin.site.register(Review, ReviewAdmin)
 
 
 

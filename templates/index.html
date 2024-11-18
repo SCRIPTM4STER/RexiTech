@@ -79,7 +79,7 @@
                         {% endif %}
                         <div class="card-body d-flex flex-column">
                             <h3 class="card-title">{{ product.name }}</h3>
-                            <p class="card-text text-muted">{{ product.price }} BDT</p>
+                            <p class="card-text text-muted">৳{{ product.price }}</p>
                             <div class="mt-auto">
                                 <a href="{% url 'product_detail' product_id=product.product_id %}" class="btn btn-success w-100">View Product</a>
                             </div>
